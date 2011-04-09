@@ -14,7 +14,9 @@ include 'lib/purl.php';
 <html>
 <head>
 	<title>purl</title>
-	<link rel="stylesheet" href="purl.css"/>
+	<link rel="stylesheet" href="assets/css/purl.css"/>
+	<link rel="stylesheet" href="assets/css/prettify.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="assets/js/prettify.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"></script>
 	<script type="text/javascript">
@@ -44,7 +46,7 @@ include 'lib/purl.php';
 		});
 	</script>
 </head>
-<body>
+<body onload="prettyPrint()">
 <div id="wrap">
 	<div id="header">
 		<h1>purl</h1>
@@ -130,7 +132,7 @@ include 'lib/purl.php';
 			echo '<span class="header_name">' . $header_name . ($header_value ? ':' : '') . '</span>' . '<span class="header_value">' . $header_value . '</span><br />';
 		}
 		
-echo '<br /><br />' . htmlspecialchars($response['body']);
+echo '<br /><br /><code class="prettyprint">' . htmlspecialchars($response['body']) . '</code>';
 ?>
 </pre>
 		<?php
