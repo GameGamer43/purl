@@ -15,6 +15,7 @@ include 'lib/purl.php';
 <head>
 	<title>purl</title>
 	<link rel="stylesheet" href="purl.css"/>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"></script>
 	<script type="text/javascript">
 		document.observe('dom:loaded', function() {
@@ -31,6 +32,15 @@ include 'lib/purl.php';
 					el.up().remove();
 				})
 			});
+			jQuery('#select-auth').change(function() {
+				var auth = jQuery('#select-auth').val();
+				console.log(auth);
+				if(auth != 'NONE') {
+					jQuery('#auth-div').slideDown();
+				} else {
+					jQuery('#auth-div').slideUp();
+				}
+			});
 		});
 	</script>
 </head>
@@ -40,7 +50,7 @@ include 'lib/purl.php';
 		<h1>purl</h1>
 	</div>
 	<div id="content">
-		<form id="purl-form" method="post" action="/" name="purl-form">
+		<form id="purl-form" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>" name="purl-form">
 			<p>
 				<label for="url">URL</label> <input type="text" name="url" title="URL" value="<?php echo $_POST['url'] ?>">
 			</p>
@@ -54,6 +64,25 @@ include 'lib/purl.php';
 					?>
 				</select> <span><label><input type="checkbox" id="follow_redirects" name="follow_redirects" <?php echo isset($_POST['follow_redirects']) ? 'checked="checked"' : '' ?>> follow redirects</label></span>
 			</p>
+			<p>
+				<label for="select-auth">Auth Type</label>
+				<select id="select-auth" name="authentication_type">
+				<?php
+					$authtypes = array('NONE','BASIC','DIGEST');
+					foreach($authtypes as $authtype) {
+						echo '<option value="' . $authtype .'"' .($_POST['authentication_type'] == $authtype ? 'selected="selected"' : '') . '>' . $authtype . '</option>';
+					}
+				?>
+				</select>
+			</p>
+			<div id="auth-div" style="display:none;">
+				<p>
+					<label for="username">Username</label> <input type="text" name="username" value="<?php echo $_POST['username']; ?>">
+				</p>
+				<p>
+					<label for="password">Password</label> <input type="password" name="password" value="<?php echo $_POST['password']; ?>">
+				</p>
+			</div>
 			<div id="post-params">
 				<a id="add-param" href="#" name="add-param"><span>+</span> add param</a>
 				<p id="param-fields">
@@ -87,6 +116,8 @@ include 'lib/purl.php';
 						
 			$purl = new Purl();
 			$purl->url = $_POST['url'];
+			$purl->authentication_type = $_POST['authentication_type']!='NONE'?$_POST['authentication_type']:'';
+			$purl->authentication = array('username'=> $_POST['username'], 'password' => $_POST['password']);
 			$purl->method = $_POST['method'];
 			$purl->follow_redirects = isset($_POST['follow_redirects']);
 			$purl->request_params = $request_params;
@@ -111,4 +142,5 @@ echo '<br /><br />' . htmlspecialchars($response['body']);
 </div>
 </body>
 </html>
+
 

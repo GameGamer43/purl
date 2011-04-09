@@ -1,3 +1,4 @@
+
 <?php
 /**
  * purl
@@ -44,6 +45,11 @@ class Purl
 	public $authentication;
 	
 	/**
+	 * @var string $authentication_type A string of the authentication type. 
+	 */
+	public $authentication_type;
+
+	/**
 	 * @var array $request_headers An array of request headers
 	 */
 	public $request_headers;
@@ -86,7 +92,11 @@ class Purl
 				break;
 			default:
 		}
-			
+		if(isset($this->authentication_type) && $this->authentication['username'] != '' && $this->authentication['password'] != '') {
+			curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_.$this->authentication_type); 
+			curl_setopt($curl, CURLOPT_USERPWD, $this->authentication['username'] . ":" . $this->authentication['password']); 
+		}
+	
 		if($this->follow_redirects) {
 			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 			curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
@@ -120,4 +130,5 @@ class Purl
 		return array('headers' => $cleaned_headers, 'body' => $body);
 	}
 }
+
 
